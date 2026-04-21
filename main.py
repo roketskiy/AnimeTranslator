@@ -65,23 +65,34 @@ _COLOR = "\033[38;2;212;64;32m"
 _RESET = "\033[0m"
 
 
-def _render_banner(text: str, spacing: int = 4) -> list[str]:
-    lines = [""] * 5
+def _render_banner(text: str, spacing: int = 8) -> list[str]:
+    base = [""] * 5
     for i, ch in enumerate(text.upper()):
         pat = _LETTERS.get(ch, ["     "] * 5)
         for r in range(5):
             sep = " " * spacing if i > 0 else ""
-            lines[r] += sep + pat[r]
+            base[r] += sep + pat[r]
+    # 横向加倍 + 纵向复制
+    lines = []
+    for row in base:
+        expanded = "".join(c * 2 for c in row)
+        lines.append(expanded)
+        lines.append(expanded)
     return lines
 
 
-def _render_shadow(text: str, spacing: int = 4) -> list[str]:
-    lines = [""] * 5
+def _render_shadow(text: str, spacing: int = 8) -> list[str]:
+    base = [""] * 5
     for i, ch in enumerate(text.upper()):
         pat = _SHADOW_LETTERS.get(ch, ["     "] * 5)
         for r in range(5):
             sep = " " * spacing if i > 0 else ""
-            lines[r] += sep + pat[r]
+            base[r] += sep + pat[r]
+    lines = []
+    for row in base:
+        expanded = "".join(c * 2 for c in row)
+        lines.append(expanded)
+        lines.append(expanded)
     return lines
 
 
@@ -113,8 +124,8 @@ def _merge_banner_line(solid: str, shadow: str, shadow_offset: int = 1) -> str:
 
 
 def print_banner():
-    solid_lines = _render_banner("ANIME", 4) + [""] + _render_banner("TRANS", 4)
-    shadow_lines = _render_shadow("ANIME", 4) + [""] + _render_shadow("TRANS", 4)
+    solid_lines = _render_banner("ANIME", 8) + [""] + _render_banner("TRANS", 8)
+    shadow_lines = _render_shadow("ANIME", 8) + [""] + _render_shadow("TRANS", 8)
 
     h_shift = 1
     v_shift = 1
@@ -168,7 +179,7 @@ def prompt_choice(prompt: str, options: list[str]) -> int | None:
                 pass
             print(f"  请输入 1-{len(options)} 之间的数字")
 
-    result = questionary.select(prompt, choices=options, style=_Q_STYLE).ask()
+    result = questionary.select(prompt, choices=options, style=_Q_STYLE, qmark="").ask()
     if result is None:
         return None
     return options.index(result)
@@ -207,7 +218,7 @@ def prompt_yes_no(prompt: str, default: bool = True) -> bool | None:
             return default
         return val in ("y", "yes", "是")
 
-    return questionary.confirm(prompt, default=default, style=_Q_STYLE).ask()
+    return questionary.confirm(prompt, default=default, style=_Q_STYLE, qmark="").ask()
 
 
 def prompt_source_lang() -> str | None:
@@ -228,7 +239,7 @@ def prompt_source_lang() -> str | None:
                 pass
             print("  请输入 1 或 2")
 
-    choice = questionary.select("源语言", choices=["English", "日本語"], style=_Q_STYLE).ask()
+    choice = questionary.select("源语言", choices=["English", "日本語"], style=_Q_STYLE, qmark="").ask()
     if choice is None:
         return None
     return {"English": "en", "日本語": "ja"}[choice]
@@ -428,6 +439,7 @@ def interactive_loop():
                 "── 请选择模式 ──",
                 choices=[label for label, _ in modes] + ["退出"],
                 style=_Q_STYLE,
+                qmark="",
             ).ask()
 
             if choice is None or choice == "退出":
