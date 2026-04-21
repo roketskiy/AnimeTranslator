@@ -49,16 +49,16 @@ _LETTERS = {
 }
 
 _SHADOW_LETTERS = {
-    "A": [" □□□ ", "□   □", "□□□□□", "□   □", "□   □"],
-    "N": ["□   □", "□□  □", "□ □ □", "□  □□", "□   □"],
-    "I": ["□□□□□", "  □  ", "  □  ", "  □  ", "□□□□□"],
-    "M": ["□   □", "□□ □□", "□ □ □", "□   □", "□   □"],
-    "E": ["□□□□□", "□    ", "□□□□ ", "□    ", "□□□□□"],
-    "T": ["□□□□□", "  □  ", "  □  ", "  □  ", "  □  "],
-    "R": ["□□□□ ", "□   □", "□□□□ ", "□  □ ", "□   □"],
-    "S": [" □□□□", "□    ", " □□□ ", "    □", "□□□□ "],
-    "L": ["□    ", "□    ", "□    ", "□    ", "□□□□□"],
-    "O": [" □□□ ", "□   □", "□   □", "□   □", " □□□ "],
+    "A": [" ░░░ ", "░   ░", "░░░░░", "░   ░", "░   ░"],
+    "N": ["░   ░", "░░  ░", "░ ░ ░", "░  ░░", "░   ░"],
+    "I": ["░░░░░", "  ░  ", "  ░  ", "  ░  ", "░░░░░"],
+    "M": ["░   ░", "░░ ░░", "░ ░ ░", "░   ░", "░   ░"],
+    "E": ["░░░░░", "░    ", "░░░░ ", "░    ", "░░░░░"],
+    "T": ["░░░░░", "  ░  ", "  ░  ", "  ░  ", "  ░  "],
+    "R": ["░░░░ ", "░   ░", "░░░░ ", "░  ░ ", "░   ░"],
+    "S": [" ░░░░", "░    ", " ░░░ ", "    ░", "░░░░ "],
+    "L": ["░    ", "░    ", "░    ", "░    ", "░░░░░"],
+    "O": [" ░░░ ", "░   ░", "░   ░", "░   ░", " ░░░ "],
 }
 
 _COLOR = "\033[38;2;212;64;32m"
@@ -116,17 +116,32 @@ def print_banner():
     solid_lines = _render_banner("ANIME", 4) + [""] + _render_banner("TRANS", 4)
     shadow_lines = _render_shadow("ANIME", 4) + [""] + _render_shadow("TRANS", 4)
 
-    h_offset = 1
-    v_offset = 1  # 阴影整体往下移 1 行
+    h_shift = 1
+    v_shift = 1
+
+    total = max(len(solid_lines), len(shadow_lines) + v_shift)
+    merged_lines = []
+
+    for i in range(total):
+        solid = solid_lines[i] if i < len(solid_lines) else None
+        shadow = shadow_lines[i - v_shift] if (i >= v_shift and i - v_shift < len(shadow_lines)) else None
+
+        if solid and solid.strip():
+            if shadow and shadow.strip():
+                merged_lines.append(_merge_banner_line(solid, shadow, h_shift))
+            else:
+                merged_lines.append(f"{_COLOR}{solid}{_RESET}")
+        elif shadow and shadow.strip():
+            merged_lines.append(" " * h_shift + shadow)
+        else:
+            merged_lines.append("")
 
     print()
-    total = max(len(solid_lines), len(shadow_lines) + v_offset)
-    for i in range(total):
-        solid = solid_lines[i] if i < len(solid_lines) else ""
-        shadow_idx = i - v_offset
-        shadow = shadow_lines[shadow_idx] if 0 <= shadow_idx < len(shadow_lines) else ""
-        merged = _merge_banner_line(solid, shadow, shadow_offset=h_offset)
-        print(f"  {merged}")
+    for line in merged_lines:
+        if line.strip():
+            print(f"  {line}")
+        else:
+            print()
     print()
     print("        视频字幕翻译工具  v1.0")
     print()
