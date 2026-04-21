@@ -124,8 +124,8 @@ def _merge_banner_line(solid: str, shadow: str, shadow_offset: int = 1) -> str:
 
 
 def print_banner():
-    solid_lines = _render_banner("ANIME", 8) + [""] + _render_banner("TRANS", 8)
-    shadow_lines = _render_shadow("ANIME", 8) + [""] + _render_shadow("TRANS", 8)
+    solid_lines = _render_banner("ANIME", 4) + [""] + _render_banner("TRANS", 4)
+    shadow_lines = _render_shadow("ANIME", 4) + [""] + _render_shadow("TRANS", 4)
 
     h_shift = 1
     v_shift = 1
@@ -154,7 +154,6 @@ def print_banner():
         else:
             print()
     print()
-    print("        视频字幕翻译工具  v1.0")
     print()
 
 
