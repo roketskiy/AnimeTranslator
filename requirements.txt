@@ -3,7 +3,7 @@ pysrt>=1.1
 pysubs2>=1.8
 requests>=2.31
 tqdm>=4.66
-textual>=0.50.0
+questionary>=2.0
 paddleocr==2.8.1
 paddlepaddle==2.6.2
 opencv-python>=4.8
