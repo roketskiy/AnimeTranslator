@@ -164,36 +164,5 @@ ProgressView #stats-label {
     color: #a0a0a0;
 }
 
-/* Responsive: hide preview on small screens */
-@media (max-height: 40) {
-    PreviewPanel {
-        display: none;
-    }
-    
-    #content-area {
-        width: 100%;
-    }
-}
-
-/* Very small screens: hide banner */
-@media (max-height: 25) {
-    Banner {
-        display: none;
-    }
-}
-
-@media (max-width: 80) {
-    #wizard-main {
-        layout: vertical;
-    }
-    
-    #content-area {
-        width: 100%;
-        height: 60%;
-    }
-    
-    PreviewPanel {
-        width: 100%;
-        height: 40%;
-    }
-}
+/* Note: Responsive layout (small screens, narrow terminals) is handled
+   in Python code via Widget.display and size watchers */
