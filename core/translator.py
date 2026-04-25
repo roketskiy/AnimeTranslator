@@ -1,9 +1,7 @@
 import re
 import time
 import logging
-
 import requests
-
 import config
 
 log = logging.getLogger(__name__)

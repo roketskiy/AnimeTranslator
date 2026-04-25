@@ -4,9 +4,8 @@ import logging
 from pathlib import Path
 
 import click
-from tqdm import tqdm
-
 import config
+from utils.progress import FancyProgressBar
 from core.subtitle_parser import parse_subtitle_file
 from core.translator import translate_batch
 from core.srt_generator import generate_srt, generate_bilingual_srt, generate_original_srt
@@ -130,7 +129,7 @@ def hard(input_path, output_path, src, dst, bilingual):
 def _translate_texts(texts, src, dst):
     results = []
     batch_size = config.TRANSLATE_BATCH_SIZE
-    for i in tqdm(range(0, len(texts), batch_size), desc="Translating"):
+    for i in FancyProgressBar(range(0, len(texts), batch_size), desc="Translating"):
         batch = texts[i : i + batch_size]
         translated = translate_batch(batch, source_lang=src, target_lang=dst)
         results.extend(translated)

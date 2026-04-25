@@ -10,9 +10,8 @@ from pathlib import Path
 
 import questionary
 from questionary import Style
-from tqdm import tqdm
-
 import config
+from utils.progress import FancyProgressBar
 from core.subtitle_parser import parse_subtitle_file, Subtitle
 from core.translator import translate_batch
 from core.srt_generator import generate_srt, generate_bilingual_srt, generate_original_srt
@@ -405,7 +404,8 @@ def do_translate(subtitles: list[Subtitle], src: str, dst: str, keep_original: b
 
     results = []
     batch_size = config.TRANSLATE_BATCH_SIZE
-    for i in tqdm(range(0, len(texts), batch_size), desc="  \u7ffb\u8bd1\u8fdb\u5ea6"):
+    total_batches = (len(texts) + batch_size - 1) // batch_size
+    for i in FancyProgressBar(range(0, len(texts), batch_size), desc="  \u7ffb\u8bd1\u8fdb\u5ea6", total=total_batches):
         batch = texts[i : i + batch_size]
         translated = translate_batch(batch, source_lang=src, target_lang=dst)
         results.extend(translated)
