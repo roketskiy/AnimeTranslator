@@ -11,3 +11,7 @@ build/
 .vscode/
 *.srt.bak
 .superpowers/
+opencode.json
+.opencode/
+*.lnk
+.$*

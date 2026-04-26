@@ -1,8 +1,8 @@
 import os
 
-API_KEY = os.getenv("TRANSLATE_API_KEY", "sk-8487ef2c9c6d43dfbbf57246dfbad15f")
-API_BASE_URL = "https://api.deepseek.com/v1"
-API_MODEL = "deepseek-chat"
+API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+API_BASE_URL = "https://openrouter.ai/api/v1"
+API_MODEL = "openai/gpt-oss-120b:free"
 
 TRANSLATE_BATCH_SIZE = 30
 TRANSLATE_CONTEXT_SIZE = 2
