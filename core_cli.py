@@ -132,9 +132,18 @@ def _translate_texts(texts, src, dst):
         def on_batch_done(completed: int, total: int) -> None:
             pbar.update(1)
 
-        return translate_batch(
+        results = translate_batch(
             texts,
             source_lang=src,
             target_lang=dst,
             progress_callback=on_batch_done,
         )
+
+    failed = sum(1 for orig, trans in zip(texts, results) if orig == trans)
+    if failed > 0:
+        click.secho(
+            f"Warning: {failed}/{len(texts)} subtitle entries translation failed, kept original text",
+            fg="yellow",
+        )
+
+    return results

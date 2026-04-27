@@ -416,6 +416,10 @@ def do_translate(subtitles: list[Subtitle], src: str, dst: str, keep_original: b
 
     generate_srt(subtitles, results, output_path)
 
+    failed = sum(1 for orig, trans in zip(texts, results) if orig == trans)
+    if failed > 0:
+        print(f"\n  \u26a0 \u8b66\u544a: {failed}/{len(texts)} \u6761\u5b57\u5e55\u7ffb\u8bd1\u5931\u8d25\uff0c\u5df2\u4fdd\u7559\u539f\u6587")
+
     if keep_original and original_path:
         generate_original_srt(subtitles, original_path)
         print(f"\n  \u5b8c\u6210! \u8f93\u51fa\u6587\u4ef6: {output_path}  +  {original_path}")
