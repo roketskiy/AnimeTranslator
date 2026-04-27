@@ -400,15 +400,19 @@ def check_api_key() -> bool:
 
 def do_translate(subtitles: list[Subtitle], src: str, dst: str, keep_original: bool, output_path: str, original_path: str | None = None):
     texts = [s.text for s in subtitles]
+    total_batches = (len(texts) + config.TRANSLATE_BATCH_SIZE - 1) // config.TRANSLATE_BATCH_SIZE
     print(f"\n  \u5171 {len(texts)} \u6761\u5b57\u5e55\uff0c\u5f00\u59cb\u7ffb\u8bd1...\n")
 
-    results = []
-    batch_size = config.TRANSLATE_BATCH_SIZE
-    total_batches = (len(texts) + batch_size - 1) // batch_size
-    for i in FancyProgressBar(range(0, len(texts), batch_size), desc="  \u7ffb\u8bd1\u8fdb\u5ea6", total=total_batches):
-        batch = texts[i : i + batch_size]
-        translated = translate_batch(batch, source_lang=src, target_lang=dst)
-        results.extend(translated)
+    with FancyProgressBar(total=total_batches, desc="  \u7ffb\u8bd1\u8fdb\u5ea6") as pbar:
+        def on_batch_done(completed: int, total: int) -> None:
+            pbar.update(1)
+
+        results = translate_batch(
+            texts,
+            source_lang=src,
+            target_lang=dst,
+            progress_callback=on_batch_done,
+        )
 
     generate_srt(subtitles, results, output_path)
 

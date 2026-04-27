@@ -127,10 +127,14 @@ def hard(input_path, output_path, src, dst, bilingual):
 
 
 def _translate_texts(texts, src, dst):
-    results = []
-    batch_size = config.TRANSLATE_BATCH_SIZE
-    for i in FancyProgressBar(range(0, len(texts), batch_size), desc="Translating"):
-        batch = texts[i : i + batch_size]
-        translated = translate_batch(batch, source_lang=src, target_lang=dst)
-        results.extend(translated)
-    return results
+    total_batches = (len(texts) + config.TRANSLATE_BATCH_SIZE - 1) // config.TRANSLATE_BATCH_SIZE
+    with FancyProgressBar(total=total_batches, desc="Translating") as pbar:
+        def on_batch_done(completed: int, total: int) -> None:
+            pbar.update(1)
+
+        return translate_batch(
+            texts,
+            source_lang=src,
+            target_lang=dst,
+            progress_callback=on_batch_done,
+        )
